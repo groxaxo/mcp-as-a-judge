@@ -1,3 +1,23 @@
+## [Unreleased]
+
+### Added
+- **DeepSeek API Integration**: Native support for DeepSeek's advanced reasoning model
+  - Added `LLMVendor.DEEPSEEK` for direct DeepSeek API support
+  - Default model set to `deepseek-reasoner` for enhanced code understanding
+  - Updated documentation with DeepSeek as recommended provider
+  - Added configuration examples for all major MCP clients (Docker, Cursor, Claude Code)
+  
+### Enhanced
+- **Privacy Guarantees**: Explicitly documented zero telemetry and no data collection
+  - Added prominent privacy section in README
+  - Confirmed no analytics, tracking, or external calls (except to user's chosen LLM provider)
+  
+### Documentation
+- Updated README with DeepSeek quick start guide
+- Added DeepSeek to supported LLM providers table (ranked #1)
+- Updated configuration examples across all client setups
+- Enhanced `.env.example` with LLM API configuration guidance
+
 ## [1.0.0](https://github.com/OtherVibes/mcp-as-a-judge/compare/v0.1.8...v1.0.0) (2025-08-30)
 
 ### ⚠ BREAKING CHANGES

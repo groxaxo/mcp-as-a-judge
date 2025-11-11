@@ -118,6 +118,19 @@ Notes:
 
    Add this to your MCP client configuration file:
 
+   **With DeepSeek (Recommended):**
+   ```json
+   {
+     "command": "docker",
+     "args": ["run", "--rm", "-i", "--pull=always", "ghcr.io/othervibes/mcp-as-a-judge:latest"],
+     "env": {
+       "LLM_API_KEY": "your-deepseek-api-key-here",
+       "LLM_MODEL_NAME": "deepseek-reasoner"
+     }
+   }
+   ```
+
+   **With OpenAI:**
    ```json
    {
      "command": "docker",
@@ -131,7 +144,7 @@ Notes:
 
    **📝 Configuration Options (All Optional):**
    - **LLM_API_KEY**: Optional for GitHub Copilot + VS Code (has built-in MCP sampling)
-   - **LLM_MODEL_NAME**: Optional custom model (see [Supported LLM Providers](#supported-llm-providers) for defaults)
+   - **LLM_MODEL_NAME**: Required when using DeepSeek (set to `deepseek-reasoner`). For other providers, see [Supported LLM Providers](#supported-llm-providers) for defaults
    - The `--pull=always` flag ensures you always get the latest version automatically
 
    Then manually update when needed:
@@ -177,20 +190,43 @@ For [AI assistants without full MCP sampling support](#supported-ai-assistants) 
 
 - Set `LLM_API_KEY` (unified key). Vendor is auto-detected; optionally set `LLM_MODEL_NAME` to override the default.
 
+### **⭐ Recommended: DeepSeek API**
+
+**MCP as a Judge** now features enhanced reasoning capabilities powered by the **DeepSeek Reasoner** model. DeepSeek provides exceptional code understanding and advanced reasoning at a competitive price point.
+
+**Quick Start with DeepSeek:**
+1. Get your API key from [DeepSeek Platform](https://platform.deepseek.com/)
+2. Set `LLM_API_KEY` to your DeepSeek API key
+3. Set `LLM_MODEL_NAME` to `deepseek-reasoner` (or `deepseek-chat` for faster responses)
+4. The system will use DeepSeek's advanced reasoning for enhanced judgments
+
+**Why DeepSeek?**
+- ✅ Advanced reasoning capabilities for complex code analysis
+- ✅ Excellent code understanding and generation
+- ✅ Cost-effective compared to other leading models
+- ✅ Native support with optimized prompts for judging tasks
+
+**Example Configuration:**
+```bash
+export LLM_API_KEY="your-deepseek-api-key"
+export LLM_MODEL_NAME="deepseek-reasoner"
+```
+
 ### **Supported LLM Providers**
 
 | Rank | Provider | API Key Format | Default Model | Notes |
 |------|----------|----------------|---------------|-------|
-| **1** | **OpenAI** | `sk-...` | `gpt-4.1` | Fast and reliable model optimized for speed |
-| **2** | **Anthropic** | `sk-ant-...` | `claude-sonnet-4-20250514` | High-performance with exceptional reasoning |
-| **3** | **Google** | `AIza...` | `gemini-2.5-pro` | Most advanced model with built-in thinking |
-| **4** | **Azure OpenAI** | `[a-f0-9]{32}` | `gpt-4.1` | Same as OpenAI but via Azure |
-| **5** | **AWS Bedrock** | AWS credentials | `anthropic.claude-sonnet-4-20250514-v1:0` | Aligned with Anthropic |
-| **6** | **Vertex AI** | Service Account JSON | `gemini-2.5-pro` | Enterprise Gemini via Google Cloud |
-| **7** | **Groq** | `gsk_...` | `deepseek-r1` | Best reasoning model with speed advantage |
-| **8** | **OpenRouter** | `sk-or-...` | `deepseek/deepseek-r1` | Best reasoning model available |
-| **9** | **xAI** | `xai-...` | `grok-code-fast-1` | Latest coding-focused model (Aug 2025) |
-| **10** | **Mistral** | `[a-f0-9]{64}` | `pixtral-large` | Most advanced model (124B params) |
+| **1** | **DeepSeek** | `sk-[a-f0-9]{32}` | `deepseek-reasoner` | **⭐ Recommended** - Advanced reasoning model with exceptional code understanding |
+| **2** | **OpenAI** | `sk-...` | `gpt-4.1` | Fast and reliable model optimized for speed |
+| **3** | **Anthropic** | `sk-ant-...` | `claude-sonnet-4-20250514` | High-performance with exceptional reasoning |
+| **4** | **Google** | `AIza...` | `gemini-2.5-pro` | Most advanced model with built-in thinking |
+| **5** | **Azure OpenAI** | `[a-f0-9]{32}` | `gpt-4.1` | Same as OpenAI but via Azure |
+| **6** | **AWS Bedrock** | AWS credentials | `anthropic.claude-sonnet-4-20250514-v1:0` | Aligned with Anthropic |
+| **7** | **Vertex AI** | Service Account JSON | `gemini-2.5-pro` | Enterprise Gemini via Google Cloud |
+| **8** | **Groq** | `gsk_...` | `deepseek-r1` | Best reasoning model with speed advantage |
+| **9** | **OpenRouter** | `sk-or-...` | `deepseek/deepseek-r1` | Best reasoning model available |
+| **10** | **xAI** | `xai-...` | `grok-code-fast-1` | Latest coding-focused model (Aug 2025) |
+| **11** | **Mistral** | `[a-f0-9]{64}` | `pixtral-large` | Most advanced model (124B params) |
 
 
 
@@ -204,6 +240,20 @@ For [AI assistants without full MCP sampling support](#supported-ai-assistants) 
    - Click `+ Add` to add a new MCP server
 
 2. **Add MCP Server Configuration:**
+   
+   **With DeepSeek (Recommended):**
+   ```json
+   {
+     "command": "uv",
+     "args": ["tool", "run", "mcp-as-a-judge"],
+     "env": {
+       "LLM_API_KEY": "your-deepseek-api-key-here",
+       "LLM_MODEL_NAME": "deepseek-reasoner"
+     }
+   }
+   ```
+
+   **With OpenAI:**
    ```json
    {
      "command": "uv",
@@ -217,11 +267,23 @@ For [AI assistants without full MCP sampling support](#supported-ai-assistants) 
 
    **📝 Configuration Options:**
    - **LLM_API_KEY**: Required for Cursor (limited MCP sampling)
-   - **LLM_MODEL_NAME**: Optional custom model (see [Supported LLM Providers](#supported-llm-providers) for defaults)
+   - **LLM_MODEL_NAME**: Required when using DeepSeek (set to `deepseek-reasoner`). For other providers, see [Supported LLM Providers](#supported-llm-providers) for defaults
 
 #### **Claude Code**
 
 1. **Add MCP Server via CLI:**
+   
+   **With DeepSeek (Recommended):**
+   ```bash
+   # Set DeepSeek API key and model
+   export LLM_API_KEY="your-deepseek-api-key-here"
+   export LLM_MODEL_NAME="deepseek-reasoner"
+
+   # Add MCP server
+   claude mcp add mcp-as-a-judge -- uv tool run mcp-as-a-judge
+   ```
+
+   **With Anthropic:**
    ```bash
    # Set environment variables first (optional model override)
    export LLM_API_KEY="your_api_key_here"
@@ -233,6 +295,20 @@ For [AI assistants without full MCP sampling support](#supported-ai-assistants) 
 
 2. **Alternative: Manual Configuration:**
    - Create or edit `~/.config/claude-code/mcp_servers.json`
+   
+   **With DeepSeek (Recommended):**
+   ```json
+   {
+     "command": "uv",
+     "args": ["tool", "run", "mcp-as-a-judge"],
+     "env": {
+       "LLM_API_KEY": "your-deepseek-api-key-here",
+       "LLM_MODEL_NAME": "deepseek-reasoner"
+     }
+   }
+   ```
+
+   **With Anthropic:**
    ```json
    {
      "command": "uv",
@@ -246,7 +322,7 @@ For [AI assistants without full MCP sampling support](#supported-ai-assistants) 
 
    **📝 Configuration Options:**
    - **LLM_API_KEY**: Required for Claude Code (limited MCP sampling)
-   - **LLM_MODEL_NAME**: Optional custom model (see [Supported LLM Providers](#supported-llm-providers) for defaults)
+   - **LLM_MODEL_NAME**: Required when using DeepSeek (set to `deepseek-reasoner`). For other providers, see [Supported LLM Providers](#supported-llm-providers) for defaults
 
 #### **Other MCP Clients**
 
@@ -283,17 +359,19 @@ For other MCP-compatible clients, use the standard MCP server configuration:
 
 **Fallback Mode: LLM API Key**
 - When MCP sampling is not available, the server can use LLM API keys
-- Supports multiple providers via LiteLLM: OpenAI, Anthropic, Google, Azure, Groq, Mistral, xAI
+- Supports multiple providers via LiteLLM: OpenAI, Anthropic, Google, Azure, Groq, DeepSeek, Mistral, xAI
 - Automatic vendor detection from API key patterns
 - Default model selection per vendor when no model is specified
 
 
 ### **🛡️ Your Privacy Matters**
 
-- The server runs **locally** on your machine
-- **No data collection** - your code and conversations stay private
+- The server runs **100% locally** on your machine
+- **Zero telemetry** - absolutely no analytics, tracking, or data collection
+- **No data collection** - your code and conversations stay completely private
 - **No external API calls when using MCP Sampling**. If you set `LLM_API_KEY` for fallback, the server will call your chosen LLM provider only to perform judgments (plan/code/test) with the evaluation content you provide.
 - Complete control over your development workflow and sensitive information
+- All processing happens on your local machine or through your chosen LLM provider
 
 ## 🤝 **Contributing**
 

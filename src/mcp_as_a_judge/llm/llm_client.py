@@ -73,6 +73,8 @@ class LLMClient:
             self._litellm.gemini_key = api_key
         elif vendor == LLMVendor.GROQ:
             self._litellm.groq_key = api_key
+        elif vendor == LLMVendor.DEEPSEEK:
+            self._litellm.deepseek_key = api_key
         elif vendor == LLMVendor.XAI:
             self._litellm.xai_key = api_key
         elif vendor == LLMVendor.MISTRAL:
@@ -109,6 +111,8 @@ class LLMClient:
             return f"gemini/{model_name}"
         elif vendor == LLMVendor.GROQ and not model_name.startswith("groq/"):
             return f"groq/{model_name}"
+        elif vendor == LLMVendor.DEEPSEEK and not model_name.startswith("deepseek/"):
+            return f"deepseek/{model_name}"
         elif vendor == LLMVendor.XAI and not model_name.startswith("xai/"):
             return f"xai/{model_name}"
         elif vendor == LLMVendor.MISTRAL and not model_name.startswith("mistral/"):

@@ -25,6 +25,7 @@ class LLMVendor(str, Enum):
     AWS_BEDROCK = "aws_bedrock"
     VERTEX_AI = "vertex_ai"
     GROQ = "groq"
+    DEEPSEEK = "deepseek"
     MISTRAL = "mistral"
     XAI = "xai"
     OPENROUTER = "openrouter"
@@ -67,6 +68,8 @@ API_KEY_PATTERNS = {
     LLMVendor.XAI: re.compile(r"^xai-[a-zA-Z0-9]{40,}"),
     LLMVendor.OPENROUTER: re.compile(r"^sk-or-[a-zA-Z0-9_-]{48}"),
     LLMVendor.OPENAI: re.compile(r"^sk-[a-zA-Z0-9]{20,}"),
+    # DeepSeek uses hex-only format after sk-, placed after OpenAI to avoid conflicts
+    LLMVendor.DEEPSEEK: re.compile(r"^sk-[a-f0-9]{32}$"),
     # Azure uses various patterns, often similar to OpenAI
     LLMVendor.AZURE: re.compile(r"^[a-f0-9]{32}$"),
     # AWS Bedrock uses AWS credentials (detected by special marker)
@@ -86,6 +89,7 @@ DEFAULT_MODELS = {
     LLMVendor.AWS_BEDROCK: "anthropic.claude-sonnet-4-20250514-v1:0",  # Aligned with Anthropic
     LLMVendor.VERTEX_AI: "gemini-2.5-pro",  # Enterprise Gemini via Google Cloud
     LLMVendor.GROQ: "deepseek-r1",  # Best reasoning model with speed advantage
+    LLMVendor.DEEPSEEK: "deepseek-reasoner",  # Native DeepSeek reasoning model with advanced capabilities
     LLMVendor.OPENROUTER: "deepseek/deepseek-r1",  # Best reasoning model available
     LLMVendor.MISTRAL: "pixtral-large",  # Most advanced model (124B params) built on Mistral Large 2
     LLMVendor.XAI: "grok-code-fast-1",  # Latest coding-focused model with reasoning (Aug 2025)
