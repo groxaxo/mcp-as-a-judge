@@ -64,6 +64,28 @@ class TestVendorDetection:
         vendor = detect_vendor_from_api_key(api_key)
         assert vendor == LLMVendor.OPENROUTER
 
+    def test_detect_deepseek_key(self):
+        """Test DeepSeek API key detection.
+
+        Note: DeepSeek API keys have a similar format to OpenAI (sk-...)
+        and will be detected as OpenAI by auto-detection. Users should set
+        LLM_MODEL_NAME explicitly when using DeepSeek API keys.
+        """
+        # DeepSeek API keys use sk- prefix similar to OpenAI
+        api_key = "sk-1234567890abcdef1234567890abcdef"  # gitleaks:allow
+        vendor = detect_vendor_from_api_key(api_key)
+        # Will be detected as OpenAI due to pattern similarity
+        assert vendor == LLMVendor.OPENAI
+
+        # Users can explicitly configure DeepSeek by setting model name
+        config = create_llm_config(
+            api_key=api_key,
+            model_name="deepseek-reasoner",
+            vendor=LLMVendor.DEEPSEEK,
+        )
+        assert config.vendor == LLMVendor.DEEPSEEK
+        assert config.model_name == "deepseek-reasoner"
+
     def test_detect_mistral_key(self):
         """Test Mistral API key detection."""
         api_key = "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"  # gitleaks:allow
@@ -115,6 +137,11 @@ class TestDefaultModels:
         """Test Groq default model."""
         model = get_default_model(LLMVendor.GROQ)
         assert model == "deepseek-r1"  # gitleaks:allow
+
+    def test_get_deepseek_default(self):
+        """Test DeepSeek default model."""
+        model = get_default_model(LLMVendor.DEEPSEEK)
+        assert model == "deepseek-reasoner"  # gitleaks:allow
 
     def test_get_xai_default(self):
         """Test xAI default model."""
