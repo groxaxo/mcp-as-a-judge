@@ -209,6 +209,10 @@ class LLMClient:
                 **kwargs,
             }
 
+            # Add base URL if configured (for DeepSeek and other custom endpoints)
+            if self.config.base_url:
+                completion_params["api_base"] = self.config.base_url
+
             # Add JSON response format if requested
             if kwargs.get("response_format") == "json":
                 completion_params["response_format"] = {"type": "json_object"}

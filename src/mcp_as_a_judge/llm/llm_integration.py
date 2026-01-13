@@ -50,6 +50,10 @@ class LLMConfig(BaseModel):
     vendor: LLMVendor | None = Field(
         default=None, description="Detected or specified LLM vendor"
     )
+    base_url: str | None = Field(
+        default=None,
+        description="Base URL for API endpoint (e.g., https://api.deepseek.com/v1)",
+    )
     max_tokens: int = Field(
         default=MAX_TOKENS, description="Maximum tokens for LLM responses"
     )
@@ -93,7 +97,13 @@ DEFAULT_MODELS = {
     LLMVendor.OPENROUTER: "deepseek/deepseek-r1",  # Best reasoning model available
     LLMVendor.MISTRAL: "pixtral-large",  # Most advanced model (124B params) built on Mistral Large 2
     LLMVendor.XAI: "grok-code-fast-1",  # Latest coding-focused model with reasoning (Aug 2025)
-    LLMVendor.UNKNOWN: "gpt-4.1",  # Fallback to fast and reliable model
+    LLMVendor.UNKNOWN: "deepseek-reasoner",  # Default to DeepSeek Reasoner for best code understanding
+}
+
+# Default base URLs per vendor
+DEFAULT_BASE_URLS = {
+    LLMVendor.DEEPSEEK: "https://api.deepseek.com/v1",
+    # Other vendors use LiteLLM defaults
 }
 
 
@@ -128,10 +138,23 @@ def get_default_model(vendor: LLMVendor) -> str:
     return DEFAULT_MODELS.get(vendor, DEFAULT_MODELS[LLMVendor.UNKNOWN])
 
 
+def get_default_base_url(vendor: LLMVendor) -> str | None:
+    """Get default base URL for a vendor.
+
+    Args:
+        vendor: The LLM vendor
+
+    Returns:
+        Default base URL for the vendor, or None to use LiteLLM default
+    """
+    return DEFAULT_BASE_URLS.get(vendor, None)
+
+
 def create_llm_config(
     api_key: str | None = None,
     model_name: str | None = None,
     vendor: LLMVendor | None = None,
+    base_url: str | None = None,
     **kwargs: str,
 ) -> LLMConfig:
     """Create LLM configuration with vendor detection and defaults.
@@ -140,6 +163,7 @@ def create_llm_config(
         api_key: LLM API key
         model_name: Model name (optional, uses vendor default if not provided)
         vendor: LLM vendor (optional, auto-detected from API key if not provided)
+        base_url: Base URL for API endpoint (optional, uses vendor default if not provided)
         **kwargs: Additional configuration options
 
     Returns:
@@ -149,30 +173,51 @@ def create_llm_config(
     if vendor is None and api_key:
         vendor = detect_vendor_from_api_key(api_key)
     elif vendor is None:
-        vendor = LLMVendor.UNKNOWN
+        vendor = LLMVendor.DEEPSEEK  # Default to DeepSeek when no API key provided
 
     # Use default model if not provided
     if model_name is None:
         model_name = get_default_model(vendor)
 
-    return LLMConfig(api_key=api_key, model_name=model_name, vendor=vendor)
+    # Use default base URL if not provided
+    if base_url is None:
+        base_url = get_default_base_url(vendor)
+
+    return LLMConfig(
+        api_key=api_key, model_name=model_name, vendor=vendor, base_url=base_url
+    )
 
 
 def load_llm_config_from_env() -> LLMConfig | None:
     """Load LLM configuration from environment variables.
 
-    Uses LLM_API_KEY environment variable and automatically detects
-    the vendor from the API key format.
+    Supports both unified variables (LLM_API_KEY, LLM_MODEL_NAME, LLM_BASE_URL)
+    and DeepSeek-specific variables (DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, MODEL).
+
+    Priority order:
+    1. Unified variables (LLM_API_KEY, etc.)
+    2. DeepSeek-specific variables (DEEPSEEK_API_KEY, etc.)
 
     Returns:
-        LLMConfig if LLM_API_KEY found in environment, None otherwise
+        LLMConfig if API key found in environment, None otherwise
     """
-    # Check for the single LLM_API_KEY environment variable
+    # Check for unified LLM_API_KEY first (higher priority)
     api_key = os.getenv("LLM_API_KEY")
-    if api_key:
-        # Get model name from environment if specified
-        model_name = os.getenv("LLM_MODEL_NAME")
+    model_name = os.getenv("LLM_MODEL_NAME")
+    base_url = os.getenv("LLM_BASE_URL")
 
-        return create_llm_config(api_key=api_key, model_name=model_name)
+    # Fall back to DeepSeek-specific variables if unified not found
+    if not api_key:
+        api_key = os.getenv("DEEPSEEK_API_KEY")
+        if not model_name:
+            model_name = os.getenv("MODEL")
+        if not base_url:
+            base_url = os.getenv("DEEPSEEK_BASE_URL")
+
+    if api_key:
+        return create_llm_config(
+            api_key=api_key, model_name=model_name, base_url=base_url
+        )
 
     return None
+
