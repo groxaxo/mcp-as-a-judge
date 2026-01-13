@@ -14,6 +14,7 @@ from mcp_as_a_judge.llm.llm_integration import (
     LLMVendor,
     create_llm_config,
     detect_vendor_from_api_key,
+    get_default_base_url,
     get_default_model,
     load_llm_config_from_env,
 )
@@ -169,9 +170,9 @@ class TestDefaultModels:
         assert model == "gemini-2.5-pro"  # gitleaks:allow
 
     def test_get_unknown_default(self):
-        """Test unknown vendor default model."""
+        """Test unknown vendor default model (now defaults to DeepSeek)."""
         model = get_default_model(LLMVendor.UNKNOWN)
-        assert model == "gpt-4.1"  # gitleaks:allow
+        assert model == "deepseek-reasoner"  # gitleaks:allow
 
 
 class TestLLMConfig:
@@ -198,12 +199,40 @@ class TestLLMConfig:
         assert config.model_name == "claude-3-opus"  # gitleaks:allow
 
     def test_create_config_no_api_key(self):
-        """Test config creation without API key."""
+        """Test config creation without API key (now defaults to DeepSeek)."""
         config = create_llm_config()
 
         assert config.api_key is None
-        assert config.vendor == LLMVendor.UNKNOWN
-        assert config.model_name == "gpt-4.1"  # gitleaks:allow
+        assert config.vendor == LLMVendor.DEEPSEEK
+        assert config.model_name == "deepseek-reasoner"  # gitleaks:allow
+        assert config.base_url == "https://api.deepseek.com/v1"
+
+    def test_create_config_with_base_url(self):
+        """Test config creation with custom base URL."""
+        api_key = "sk-test1234567890abcdef1234567890ab"  # Test key - not real
+        config = create_llm_config(
+            api_key=api_key,
+            vendor=LLMVendor.DEEPSEEK,
+            base_url="https://custom.deepseek.com/v1"
+        )
+
+        assert config.api_key == api_key
+        assert config.vendor == LLMVendor.DEEPSEEK
+        assert config.model_name == "deepseek-reasoner"
+        assert config.base_url == "https://custom.deepseek.com/v1"
+
+    def test_create_config_deepseek_default_base_url(self):
+        """Test config creation with DeepSeek gets default base URL."""
+        api_key = "sk-test1234567890abcdef1234567890ab"  # Test key - not real
+        config = create_llm_config(
+            api_key=api_key,
+            vendor=LLMVendor.DEEPSEEK
+        )
+
+        assert config.api_key == api_key
+        assert config.vendor == LLMVendor.DEEPSEEK
+        assert config.model_name == "deepseek-reasoner"
+        assert config.base_url == "https://api.deepseek.com/v1"
 
 
 class TestEnvironmentLoading:
@@ -249,6 +278,78 @@ class TestEnvironmentLoading:
         with patch.dict(os.environ, {}, clear=True):
             config = load_llm_config_from_env()
             assert config is None
+
+    def test_load_deepseek_from_env_unified(self):
+        """Test loading DeepSeek config from unified environment variables."""
+        with patch.dict(
+            os.environ,
+            {
+                "LLM_API_KEY": "sk-1234567890abcdef1234567890abcdef",
+                "LLM_MODEL_NAME": "deepseek-reasoner",
+                "LLM_BASE_URL": "https://api.deepseek.com/v1",
+            },
+            clear=True,
+        ):
+            config = load_llm_config_from_env()
+
+            assert config is not None
+            assert config.api_key == "sk-1234567890abcdef1234567890abcdef"  # gitleaks:allow
+            assert config.model_name == "deepseek-reasoner"  # gitleaks:allow
+            assert config.base_url == "https://api.deepseek.com/v1"
+
+    def test_load_deepseek_from_env_specific(self):
+        """Test loading DeepSeek config from DeepSeek-specific environment variables."""
+        with patch.dict(
+            os.environ,
+            {
+                "DEEPSEEK_API_KEY": "sk-abcdef1234567890abcdef1234567890",
+                "MODEL": "deepseek-reasoner",
+                "DEEPSEEK_BASE_URL": "https://api.deepseek.com/v1",
+            },
+            clear=True,
+        ):
+            config = load_llm_config_from_env()
+
+            assert config is not None
+            assert config.api_key == "sk-abcdef1234567890abcdef1234567890"  # gitleaks:allow
+            assert config.model_name == "deepseek-reasoner"  # gitleaks:allow
+            assert config.base_url == "https://api.deepseek.com/v1"
+
+    def test_load_deepseek_from_env_minimal(self):
+        """Test loading DeepSeek config with minimal configuration (uses defaults)."""
+        with patch.dict(
+            os.environ,
+            {
+                "DEEPSEEK_API_KEY": "sk-abcdef1234567890abcdef1234567890",
+            },
+            clear=True,
+        ):
+            config = load_llm_config_from_env()
+
+            assert config is not None
+            assert config.api_key == "sk-abcdef1234567890abcdef1234567890"  # gitleaks:allow
+            # Should auto-detect as OpenAI due to sk- prefix
+            assert config.vendor == LLMVendor.OPENAI
+            # Should use OpenAI default model
+            assert config.model_name == "gpt-4.1"  # gitleaks:allow
+
+    def test_load_unified_priority_over_specific(self):
+        """Test that unified variables take priority over DeepSeek-specific ones."""
+        with patch.dict(
+            os.environ,
+            {
+                "LLM_API_KEY": "sk-unified-key-12345678901234567890",
+                "LLM_MODEL_NAME": "unified-model",
+                "DEEPSEEK_API_KEY": "sk-deepseek-key-12345678901234567890",
+                "MODEL": "deepseek-model",
+            },
+            clear=True,
+        ):
+            config = load_llm_config_from_env()
+
+            assert config is not None
+            assert config.api_key == "sk-unified-key-12345678901234567890"  # gitleaks:allow
+            assert config.model_name == "unified-model"  # gitleaks:allow
 
 
 class TestLLMClient:

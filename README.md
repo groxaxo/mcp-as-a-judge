@@ -346,6 +346,261 @@ For other MCP-compatible clients, use the standard MCP server configuration:
 
 
 
+## 🔌 **Connect This MCP Server**
+
+This section provides copy-paste configuration examples for connecting MCP as a Judge to popular AI coding assistants. The server uses **stdio transport** for reliable, universal compatibility.
+
+### **Start the Server**
+
+The server is automatically started by your MCP client using one of these methods:
+
+**Method 1: Using Docker (Recommended)**
+```bash
+docker run -i --rm --pull=always ghcr.io/othervibes/mcp-as-a-judge:latest
+```
+
+**Method 2: Using uv (requires Python)**
+```bash
+uv tool run mcp-as-a-judge
+```
+
+### **Claude Code**
+
+Claude Code supports stdio transport via command-line configuration.
+
+**Add via CLI:**
+```bash
+# Set environment variables
+export DEEPSEEK_API_KEY="your-deepseek-api-key-here"
+export MODEL="deepseek-reasoner"
+
+# Add MCP server
+claude mcp add mcp-as-a-judge -- uv tool run mcp-as-a-judge
+```
+
+**Or add to `.mcp.json` (project-scoped):**
+```json
+{
+  "mcpServers": {
+    "mcp-as-a-judge": {
+      "command": "uv",
+      "args": ["tool", "run", "mcp-as-a-judge"],
+      "env": {
+        "DEEPSEEK_API_KEY": "${DEEPSEEK_API_KEY}",
+        "MODEL": "deepseek-reasoner"
+      }
+    }
+  }
+}
+```
+
+**With Docker:**
+```json
+{
+  "mcpServers": {
+    "mcp-as-a-judge": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "--pull=always", "ghcr.io/othervibes/mcp-as-a-judge:latest"],
+      "env": {
+        "DEEPSEEK_API_KEY": "${DEEPSEEK_API_KEY}",
+        "MODEL": "deepseek-reasoner"
+      }
+    }
+  }
+}
+```
+
+*Claude Code supports `${VAR}` env-var expansion in `.mcp.json`. ([Claude Code Docs](https://code.claude.com/docs/en/mcp))*
+
+### **OpenCode (opencode)**
+
+OpenCode supports MCP servers via stdio transport in `opencode.json` / `opencode.jsonc`.
+
+**Add to your `opencode.json`:**
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "mcp-as-a-judge": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["tool", "run", "mcp-as-a-judge"],
+      "env": {
+        "DEEPSEEK_API_KEY": "your-deepseek-api-key-here",
+        "MODEL": "deepseek-reasoner"
+      },
+      "enabled": true
+    }
+  }
+}
+```
+
+**With Docker:**
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "mcp-as-a-judge": {
+      "type": "stdio",
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "--pull=always", "ghcr.io/othervibes/mcp-as-a-judge:latest"],
+      "env": {
+        "DEEPSEEK_API_KEY": "your-deepseek-api-key-here",
+        "MODEL": "deepseek-reasoner"
+      },
+      "enabled": true
+    }
+  }
+}
+```
+
+*([OpenCode MCP Servers Documentation](https://opencode.ai/docs/mcp-servers/))*
+
+### **Google Antigravity**
+
+Google Antigravity supports MCP servers via raw JSON configuration.
+
+**Setup Steps:**
+1. Open **MCP Servers** menu
+2. Select **Manage MCP Servers**
+3. Click **View raw config**
+4. Paste the following JSON configuration:
+
+```json
+{
+  "mcpServers": {
+    "mcp-as-a-judge": {
+      "command": "uv",
+      "args": ["tool", "run", "mcp-as-a-judge"],
+      "env": {
+        "DEEPSEEK_API_KEY": "your-deepseek-api-key-here",
+        "MODEL": "deepseek-reasoner"
+      }
+    }
+  }
+}
+```
+
+**With Docker:**
+```json
+{
+  "mcpServers": {
+    "mcp-as-a-judge": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "--pull=always", "ghcr.io/othervibes/mcp-as-a-judge:latest"],
+      "env": {
+        "DEEPSEEK_API_KEY": "your-deepseek-api-key-here",
+        "MODEL": "deepseek-reasoner"
+      }
+    }
+  }
+}
+```
+
+5. Save the configuration
+
+*([Antigravity MCP Setup Reference](https://github.com/czlonkowski/n8n-mcp/blob/main/docs/ANTIGRAVITY_SETUP.md))*
+
+---
+
+## ⚙️ **LLM Defaults (DeepSeek)**
+
+**MCP as a Judge** defaults to **DeepSeek Reasoner** for advanced code understanding and reasoning capabilities at a competitive price point.
+
+### **Default Configuration**
+
+- **Default Model:** `deepseek-reasoner` ([DeepSeek API Docs](https://api-docs.deepseek.com/guides/reasoning_model))
+- **Default Base URL:** `https://api.deepseek.com/v1` ([DeepSeek API Docs](https://api-docs.deepseek.com/))
+- **OpenAI-Compatible API:** Uses OpenAI-compatible endpoints for easy integration
+
+### **Environment Variables**
+
+Configure via environment variables (pick one method):
+
+**Method 1: DeepSeek-specific variables (recommended for clarity)**
+```bash
+export DEEPSEEK_API_KEY="sk-your-api-key-here"
+export DEEPSEEK_BASE_URL="https://api.deepseek.com/v1"  # Optional, uses default
+export MODEL="deepseek-reasoner"  # Optional, uses default
+```
+
+**Method 2: Unified LLM variables (works with any provider)**
+```bash
+export LLM_API_KEY="your-api-key-here"
+export LLM_MODEL_NAME="deepseek-reasoner"
+export LLM_BASE_URL="https://api.deepseek.com/v1"  # Optional for custom endpoints
+```
+
+### **Getting Started with DeepSeek**
+
+1. **Get your API key** from [DeepSeek Platform](https://platform.deepseek.com/)
+2. **Set environment variable** (choose one method above)
+3. **Start using** - the server automatically configures DeepSeek as the default
+
+### **Why DeepSeek?**
+
+- ✅ Advanced reasoning capabilities for complex code analysis
+- ✅ Excellent code understanding and generation
+- ✅ Cost-effective compared to other leading models
+- ✅ Native support with optimized prompts for judging tasks
+- ✅ OpenAI-compatible API for easy integration
+
+### **Using Other Providers**
+
+You can use any supported LLM provider by setting the appropriate environment variables. See [Supported LLM Providers](#supported-llm-providers) for the complete list.
+
+**Examples:**
+```bash
+# OpenAI
+export LLM_API_KEY="sk-..." 
+export LLM_MODEL_NAME="gpt-4.1"
+
+# Anthropic
+export LLM_API_KEY="sk-ant-..."
+export LLM_MODEL_NAME="claude-sonnet-4-20250514"
+
+# Groq
+export LLM_API_KEY="gsk_..."
+export LLM_MODEL_NAME="deepseek-r1"
+```
+
+---
+
+## 🔒 **Privacy & Telemetry**
+
+### **🛡️ Zero Telemetry Guarantee**
+
+**Telemetry is disabled by default.** MCP as a Judge is committed to your privacy:
+
+- **No analytics** - No PostHog, Google Analytics, Segment, or similar services
+- **No tracing** - No OpenTelemetry (OTel), Datadog, New Relic, or APM tools
+- **No error reporting** - No Sentry, Bugsnag, or crash reporters
+- **No phone home** - No automatic update checks or usage statistics
+- **No beacons** - No tracking pixels or fingerprinting
+
+**The only network calls made are:**
+- Calls to your configured LLM provider (only when using LLM API fallback)
+- MCP protocol communication with your local AI assistant
+
+### **Chain-of-Thought Protection**
+
+DeepSeek Reasoner's chain-of-thought is treated as **sensitive internal reasoning**:
+- **Not logged** to files or console
+- **Not exposed** in API responses
+- **Only final outputs** are returned to the user
+
+This protects proprietary reasoning patterns and prevents prompt injection attacks.
+
+### **Your Data Stays Local**
+
+- The server runs **100% locally** on your machine (no cloud deployment required)
+- **Zero data collection** - your code and conversations stay completely private
+- **No external API calls when using MCP Sampling** (GitHub Copilot + VS Code)
+- If using LLM API fallback, calls go only to your chosen provider
+- Complete control over your development workflow and sensitive information
+
+---
+
 
 ## 🔒 **Privacy & Flexible AI Integration**
 
