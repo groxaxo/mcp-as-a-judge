@@ -8,7 +8,7 @@ on:
 env:
   PYTHON_VERSION: "3.13"
   REGISTRY: ghcr.io
-  IMAGE_NAME: othervibes/mcp-as-a-judge
+  IMAGE_NAME: groxaxo/mcp-as-a-judge
 
 jobs:
   build_dist:
@@ -155,7 +155,7 @@ jobs:
           project = data['project']
 
           # Extract metadata for the action
-          name = f"io.github.OtherVibes/{project['name']}"
+          name = f"io.github.groxaxo/{project['name']}"
           description = project['description']
           homepage = next((url[1] for url in project.get('urls', {}).items() if url[0] == 'Homepage'), '')
           package_name = project['name']

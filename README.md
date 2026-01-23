@@ -1,6 +1,6 @@
 # MCP as a Judge ⚖️
 
-mcp-name: io.github.OtherVibes/mcp-as-a-judge
+mcp-name: io.github.groxaxo/mcp-as-a-judge
 
 <div align="left">
   <img src="assets/mcp-as-a-judge.png" alt="MCP as a Judge Logo" width="200">
@@ -13,8 +13,8 @@ mcp-name: io.github.OtherVibes/mcp-as-a-judge
 [![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io/)
 
-[![CI](https://github.com/OtherVibes/mcp-as-a-judge/workflows/CI/badge.svg)](https://github.com/OtherVibes/mcp-as-a-judge/actions/workflows/ci.yml)
-[![Release](https://github.com/OtherVibes/mcp-as-a-judge/workflows/Release/badge.svg)](https://github.com/OtherVibes/mcp-as-a-judge/actions/workflows/release.yml)
+[![CI](https://github.com/groxaxo/mcp-as-a-judge/workflows/CI/badge.svg)](https://github.com/groxaxo/mcp-as-a-judge/actions/workflows/ci.yml)
+[![Release](https://github.com/groxaxo/mcp-as-a-judge/workflows/Release/badge.svg)](https://github.com/groxaxo/mcp-as-a-judge/actions/workflows/release.yml)
 [![PyPI version](https://img.shields.io/pypi/v/mcp-as-a-judge.svg)](https://pypi.org/project/mcp-as-a-judge/)
 
 
@@ -122,7 +122,7 @@ Notes:
    ```json
    {
      "command": "docker",
-     "args": ["run", "--rm", "-i", "--pull=always", "ghcr.io/othervibes/mcp-as-a-judge:latest"],
+     "args": ["run", "--rm", "-i", "--pull=always", "ghcr.io/groxaxo/mcp-as-a-judge:latest"],
      "env": {
        "LLM_API_KEY": "your-deepseek-api-key-here",
        "LLM_MODEL_NAME": "deepseek-reasoner"
@@ -134,7 +134,7 @@ Notes:
    ```json
    {
      "command": "docker",
-     "args": ["run", "--rm", "-i", "--pull=always", "ghcr.io/othervibes/mcp-as-a-judge:latest"],
+     "args": ["run", "--rm", "-i", "--pull=always", "ghcr.io/groxaxo/mcp-as-a-judge:latest"],
      "env": {
        "LLM_API_KEY": "your-openai-api-key-here",
        "LLM_MODEL_NAME": "gpt-4o-mini"
@@ -151,7 +151,7 @@ Notes:
 
    ```bash
    # Pull the latest version
-   docker pull ghcr.io/othervibes/mcp-as-a-judge:latest
+   docker pull ghcr.io/groxaxo/mcp-as-a-judge:latest
    ```
 
 ### **Method 2: Using uv**
@@ -356,7 +356,7 @@ The server is automatically started by your MCP client using one of these method
 
 **Method 1: Using Docker (Recommended)**
 ```bash
-docker run -i --rm --pull=always ghcr.io/othervibes/mcp-as-a-judge:latest
+docker run -i --rm --pull=always ghcr.io/groxaxo/mcp-as-a-judge:latest
 ```
 
 **Method 2: Using uv (requires Python)**
@@ -400,7 +400,7 @@ claude mcp add mcp-as-a-judge -- uv tool run mcp-as-a-judge
   "mcpServers": {
     "mcp-as-a-judge": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "--pull=always", "ghcr.io/othervibes/mcp-as-a-judge:latest"],
+      "args": ["run", "-i", "--rm", "--pull=always", "ghcr.io/groxaxo/mcp-as-a-judge:latest"],
       "env": {
         "DEEPSEEK_API_KEY": "${DEEPSEEK_API_KEY}",
         "MODEL": "deepseek-reasoner"
@@ -443,7 +443,7 @@ OpenCode supports MCP servers via stdio transport in `opencode.json` / `opencode
     "mcp-as-a-judge": {
       "type": "stdio",
       "command": "docker",
-      "args": ["run", "-i", "--rm", "--pull=always", "ghcr.io/othervibes/mcp-as-a-judge:latest"],
+      "args": ["run", "-i", "--rm", "--pull=always", "ghcr.io/groxaxo/mcp-as-a-judge:latest"],
       "env": {
         "DEEPSEEK_API_KEY": "your-deepseek-api-key-here",
         "MODEL": "deepseek-reasoner"
@@ -487,7 +487,7 @@ Google Antigravity supports MCP servers via raw JSON configuration.
   "mcpServers": {
     "mcp-as-a-judge": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "--pull=always", "ghcr.io/othervibes/mcp-as-a-judge:latest"],
+      "args": ["run", "-i", "--rm", "--pull=always", "ghcr.io/groxaxo/mcp-as-a-judge:latest"],
       "env": {
         "DEEPSEEK_API_KEY": "your-deepseek-api-key-here",
         "MODEL": "deepseek-reasoner"
@@ -636,7 +636,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 ```bash
 # Clone the repository
-git clone https://github.com/OtherVibes/mcp-as-a-judge.git
+git clone https://github.com/groxaxo/mcp-as-a-judge.git
 cd mcp-as-a-judge
 
 # Install dependencies with uv

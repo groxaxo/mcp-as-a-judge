@@ -5,19 +5,19 @@
   "repository": {
     "id": 1,
     "name": "mcp-as-a-judge",
-    "full_name": "OtherVibes/mcp-as-a-judge",
+    "full_name": "groxaxo/mcp-as-a-judge",
     "owner": {
-      "name": "OtherVibes",
-      "login": "OtherVibes"
+      "name": "groxaxo",
+      "login": "groxaxo"
     },
     "private": false,
-    "html_url": "https://github.com/OtherVibes/mcp-as-a-judge",
+    "html_url": "https://github.com/groxaxo/mcp-as-a-judge",
     "description": "MCP as a Judge - AI-powered code review and workflow guidance",
     "fork": false,
     "created_at": "2024-01-01T00:00:00Z",
     "updated_at": "2024-01-01T00:00:00Z",
     "pushed_at": "2024-01-01T00:00:00Z",
-    "clone_url": "https://github.com/OtherVibes/mcp-as-a-judge.git",
+    "clone_url": "https://github.com/groxaxo/mcp-as-a-judge.git",
     "default_branch": "main"
   },
   "pusher": {
